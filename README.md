@@ -161,18 +161,17 @@ Generated diary entries include:
 
 ```
 tts-to-obsidian-markdown/
-├── src/
-│   └── tts_to_obsidian/
-│       ├── audio/
-│       │   └── recorder.py
-│       ├── transcription/
-│       │   └── whisper.py
-│       ├── enhancement/
-│       │   └── processor.py
-│       ├── obsidian/
-│       │   └── note_generator.py
-│       └── utils/
-│           └── helpers.py
+└── tts_to_obsidian/
+│   ├── audio/
+│   │   └── recorder.py
+│   ├── transcription/
+│   │   └── whisper.py
+│   ├── enhancement/
+│   │   └── processor.py
+│   ├── obsidian/
+│   │   └── note_generator.py
+│   └── utils/
+│       └── helpers.py
 ├── templates/
 │   └── diary_template.md
 ├── tests/
@@ -187,28 +186,6 @@ tts-to-obsidian-markdown/
 ```bash
 uv run pytest tests/
 ```
-
-## Troubleshooting
-
-1. **No audio input detected**
-   - Check your microphone settings
-   - Ensure sounddevice is properly installed
-   - Try running with `--debug` flag for more information
-
-2. **Transcription issues**
-   - Verify Whisper model is properly installed
-   - Check audio file format (WAV recommended)
-   - Try a different Whisper model size
-
-3. **Obsidian integration problems**
-   - Verify vault path in config.yaml
-   - Check folder permissions
-   - Ensure template file exists
-
-4. **Package management issues**
-   - Ensure uv is properly installed
-   - Try running `uv sync --upgrade` to update dependencies
-   - Check `requirements.txt` for any version conflicts
 
 ## Contributing
 
