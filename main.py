@@ -44,11 +44,11 @@ def check_ollama_server() -> bool:
         return False
 
 def check_whisper_model() -> bool:
-    """Check if Whisper model is available"""
+    """Check if any Whisper model is available"""
     try:
         response = requests.get("http://localhost:11434/api/tags")
         models = response.json().get("models", [])
-        return any(model["name"] == "large" for model in models)
+        return any(model["name"].startswith("whisper") for model in models)
     except (requests.exceptions.ConnectionError, KeyError):
         return False
 

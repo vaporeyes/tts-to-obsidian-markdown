@@ -1,83 +1,214 @@
 # Voice-to-Diary Obsidian Note Generator
 
-A Python application that converts voice recordings into well-structured Obsidian diary entries. This tool processes audio input (either through microphone recording or file upload), transcribes it using Whisper via Ollama, enhances the text, and saves it as a properly formatted Obsidian note.
+A Python application that converts voice recordings into formatted diary entries in Obsidian. The application uses OpenAI's Whisper for speech-to-text conversion and provides a simple interface for recording and processing audio into well-structured markdown notes.
 
 ## Features
 
-- 🎤 Audio input via microphone recording or file upload (mp3, wav, m4a)
-- 🎯 High-quality transcription using Whisper Tiny via Ollama
-- ✨ Text enhancement and structuring
-- 📝 Automatic Obsidian note generation with proper formatting
-- 🏷️ Smart tagging and metadata generation
-- 🔒 Local processing for privacy
-- ⚙️ Customizable settings and templates
+- 🎤 Record audio directly from your microphone
+- 🎯 High-quality transcription using OpenAI's Whisper
+- 📝 Automatic text enhancement and formatting
+- 📅 Organized diary entries with metadata
+- 🔗 Automatic linking to related entries
+- 🎵 Audio file management with unique timestamps
+- 🌤️ Weather and location tracking (currently using dummy data)
+- 🔄 Automatic cleanup of old recordings
 
 ## Requirements
 
-- Python 3.9+
-- Ollama with Whisper model
-- macOS (optimized for M-series chips)
-- Obsidian installed with a vault configured
+- Python 3.8 or higher
+- uv (Python package manager)
+- OpenAI Whisper
+- Obsidian vault
+- Sound device support for recording
 
 ## Installation
 
-1. Clone this repository:
+1. Clone the repository:
 
 ```bash
-git clone https://github.com/vaporeyes/tts-to-obsidian-markdown.git
+git clone https://github.com/yourusername/tts-to-obsidian-markdown.git
 cd tts-to-obsidian-markdown
 ```
 
-2. Create and activate a virtual environment:
+2. Install uv if you haven't already:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # On macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-3. Install dependencies:
+3. Create and activate a virtual environment:
 
 ```bash
-pip install -r requirements.txt
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 ```
 
-4. Install Ollama and the Whisper model:
+4. Install dependencies:
 
 ```bash
-# Install Ollama from https://ollama.ai
-ollama pull whisper
+uv sync
 ```
 
-## Configuration
+5. Download the spaCy model:
 
-1. Create a `config.yaml` file in the project root (see `config.yaml.example` for template)
-2. Set your Obsidian vault path and other preferences
-3. Configure any additional settings as needed
+```bash
+uv pip install spacy
+python -m spacy download en_core_web_sm
+```
+
+6. Create a `config.yaml` file based on `config.yaml.example`:
+
+```bash
+cp config.yaml.example config.yaml
+```
+
+7. Edit `config.yaml` with your Obsidian vault path and preferences.
 
 ## Usage
 
-1. Start the application:
+### Recording and Processing
+
+1. Start recording:
 
 ```bash
-python main.py
+uv run python main.py record
 ```
 
-2. Choose your input method:
-   - Record audio directly
-   - Upload an audio file
+- Press Enter to start recording
+- Press Enter again to stop recording
+- The audio will be automatically transcribed and processed
 
-3. Wait for processing (typically under 30 seconds for 5-minute recordings)
+2. Process an existing audio file:
 
-4. Review and edit the transcription if needed
+```bash
+uv run python main.py process path/to/audio.wav
+```
 
-5. Save to your Obsidian vault
+3. Transcribe an audio file without creating a note:
 
-## Privacy
+```bash
+uv run python main.py transcribe path/to/audio.wav
+```
 
-- All processing is done locally
-- No audio data is uploaded to external services
-- Option to delete audio files after processing
-- Configurable data retention policies
+4. Clean up old recordings:
+
+```bash
+uv run python main.py cleanup
+```
+
+### Configuration
+
+The `config.yaml` file contains several important settings:
+
+```yaml
+audio:
+  sample_rate: 16000
+  channels: 1
+  chunk_size: 1024
+  max_duration: 300  # Maximum recording duration in seconds
+
+transcription:
+  model: "base.en"  # Whisper model to use
+  language: "en"
+  temperature: 0.0
+  initial_prompt: "This is a diary entry."
+
+obsidian:
+  vault_path: "/path/to/your/vault"
+  diary_folder: "diary"
+  template_path: "templates/diary_template.md"
+
+privacy:
+  delete_audio_after_processing: false
+  retention_days: 30
+```
+
+### Available Whisper Models
+
+The application supports various Whisper models:
+
+- `tiny.en`: Fastest, English-only
+- `base.en`: Good balance of speed and accuracy, English-only
+- `small.en`: Better accuracy, English-only
+- `medium.en`: High accuracy, English-only
+- `large-v3`: Best accuracy, multilingual
+
+Choose the model based on your needs for speed vs. accuracy.
+
+### Note Structure
+
+Generated diary entries include:
+
+- Date and time
+- Recording duration
+- Detected mood
+- Identified topics
+- Word count
+- Weather (currently dummy data)
+- Location (currently dummy data)
+- Related entries from the past week
+- Audio recording link
+
+### Audio File Management
+
+- Audio files are stored in `attachments/audio` within your Obsidian vault
+- Files are named with epoch timestamps for uniqueness
+- Old recordings can be automatically cleaned up based on retention policy
+
+## Development
+
+### Project Structure
+
+```
+tts-to-obsidian-markdown/
+├── src/
+│   └── tts_to_obsidian/
+│       ├── audio/
+│       │   └── recorder.py
+│       ├── transcription/
+│       │   └── whisper.py
+│       ├── enhancement/
+│       │   └── processor.py
+│       ├── obsidian/
+│       │   └── note_generator.py
+│       └── utils/
+│           └── helpers.py
+├── templates/
+│   └── diary_template.md
+├── tests/
+│   └── test_basic.py
+├── config.yaml.example
+├── requirements.txt
+└── main.py
+```
+
+### Running Tests
+
+```bash
+uv run pytest tests/
+```
+
+## Troubleshooting
+
+1. **No audio input detected**
+   - Check your microphone settings
+   - Ensure sounddevice is properly installed
+   - Try running with `--debug` flag for more information
+
+2. **Transcription issues**
+   - Verify Whisper model is properly installed
+   - Check audio file format (WAV recommended)
+   - Try a different Whisper model size
+
+3. **Obsidian integration problems**
+   - Verify vault path in config.yaml
+   - Check folder permissions
+   - Ensure template file exists
+
+4. **Package management issues**
+   - Ensure uv is properly installed
+   - Try running `uv sync --upgrade` to update dependencies
+   - Check `requirements.txt` for any version conflicts
 
 ## Contributing
 
