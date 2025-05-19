@@ -1,0 +1,42 @@
+# Voice-to-Diary Obsidian Note Generator Configuration
+
+# Obsidian Vault Settings
+obsidian:
+  vault_path: "~/Documents/Obsidian/MyVault"  # Path to your Obsidian vault
+  diary_folder: "Diary"  # Subfolder for diary entries
+  template_path: "templates/diary_template.md"  # Path to note template
+
+# Audio Settings
+audio:
+  sample_rate: 16000  # Sample rate for recording
+  channels: 1  # Number of audio channels
+  chunk_size: 1024  # Audio chunk size
+  format: "wav"  # Default audio format
+  max_duration: 300  # Maximum recording duration in seconds
+
+# Transcription Settings
+transcription:
+  model: "whisper"  # Whisper model to use
+  language: "en"  # Default language
+  temperature: 0.0  # Sampling temperature
+  initial_prompt: "This is a diary entry."  # Initial prompt for transcription
+
+# Text Enhancement Settings
+enhancement:
+  remove_filler_words: true
+  fix_grammar: true
+  detect_emotions: true
+  identify_topics: true
+  format_dates: true
+
+# Privacy Settings
+privacy:
+  delete_audio_after_processing: false
+  encrypt_sensitive_entries: false
+  retention_days: 30  # Days to keep audio files
+
+# UI Settings
+ui:
+  show_progress: true
+  enable_preview: true
+  theme: "dark"  # UI theme (dark/light) 
